@@ -120,7 +120,7 @@ namespace TronLCSim
             else if (e.ProgressPercentage == 99)
             {
                 Ellipse targetEllipse = (Ellipse)e.UserState;
-                RecolorLines(Brushes.Orange, Brushes.Black);
+                RecolorLines(Brushes.Red, Brushes.Black);
                 targetEllipse.Stroke = Brushes.DarkGray;
                 targetEllipse.Fill = Brushes.Black;
                 MessageBox.Show("Player 1 loses!");
@@ -174,20 +174,21 @@ namespace TronLCSim
                 {
                     break;
                 }
-                int px=0, py=0;
-                switch(currentPlayer)
+                int px = 0, py = 0;
+                int ox = 0, oy = 0;
+                switch (currentPlayer)
                 {
                     case 0:
                         Locate(map, PointState.Player1, out px, out py);
+                        Locate(map, PointState.Player2, out ox, out oy);
                         break;
                     case 1:
                         Locate(map, PointState.Player2, out px, out py);
+                        Locate(map, PointState.Player1, out ox, out oy);
                         break;
                 }
-                if ((map[(px - 1) >= 0 ? (px - 1) : 29, py] != PointState.Clear) &&
-                    (map[(px + 1) % 30, py] != PointState.Clear) &&
-                    (map[px, (py - 1) >= 0 ? (py - 1) : 29] != PointState.Clear) &&
-                    (map[px, (py + 1) % 30] != PointState.Clear))
+                bool hasMove = CheckLegalMoveAvailable(px, py, ox, oy);
+                if (hasMove == false)
                 {
                     worker.ReportProgress((currentPlayer == 0) ? 99 : 100, points[px, py]);
                     break;
@@ -211,7 +212,23 @@ namespace TronLCSim
                         break;
                 }
 
-                if (newpx != px)
+                if (py == 0)
+                {
+                    for (int xi = 0; xi < 30; xi++)
+                    {
+                        worker.ReportProgress(currentPlayer, Hlines[xi, py]);
+                    }
+                    worker.ReportProgress(currentPlayer, Vlines[newpx, py]);
+                }
+                else if (py == 29)
+                {
+                    for (int xi = 0; xi < 30; xi++)
+                    {
+                        worker.ReportProgress(currentPlayer, Hlines[xi, py]);
+                    }
+                    worker.ReportProgress(currentPlayer, Vlines[newpx, newpy]);
+                }
+                else if (newpx != px)
                 {
                     // Horizontal movement
                     if ((newpx - px == 1) || ((px == 29) && (newpx == 0)))
@@ -245,8 +262,78 @@ namespace TronLCSim
             }
         }
 
+        private bool CheckLegalMoveAvailable(int px, int py, int ox, int oy)
+        {
+            bool goUp = (py > 0) &&  map[px, py - 1] == PointState.Clear;
+            bool goDown = (py < 29) && map[px, py + 1] == PointState.Clear;
+            bool goLeft = map[(px - 1) >= 0 ? (px - 1) : 29, py] == PointState.Clear;
+            bool goRight = map[(px + 1) <= 29 ? (px + 1) : 0, py] == PointState.Clear;
+            if (py == 0)
+            {
+                goLeft = goRight = goUp = goDown = false;
+                for (int xi = 0; xi < 30; xi++)
+                {
+                    if (map[xi, 1] == PointState.Clear)
+                    {
+                        goDown = true;
+                        break;
+                    }
+                }
+            }
+            else if (py == 29)
+            {
+                goLeft = goRight = goUp = goDown = false;
+                for (int xi = 0; xi < 30; xi++)
+                {
+                    if (map[xi, 28] == PointState.Clear)
+                    {
+                        goUp = true;
+                        break;
+                    }
+                }
+            }
+            else if (py == 1)
+            {
+                if (oy == 0)
+                {
+                    goUp = false;
+                }
+            }
+            else if (py == 28)
+            {
+                if (oy == 29)
+                {
+                    goDown = false;
+                }
+            }
+
+            return (goUp || goDown || goLeft || goRight);
+        }
+
         private void UpdateCurrentMapState(PointState[,] newState)
         {
+            for (int x = 0; x < 30; x++)
+            {
+                if (newState[x, 0] == PointState.YourWall)
+                {
+                    for (int xi = 0; xi < 30; xi++)
+                    {
+                        newState[xi, 0] = PointState.YourWall;
+                    }
+                    break;
+                }
+            }
+            for (int x = 0; x < 30; x++)
+            {
+                if (newState[x, 29] == PointState.YourWall)
+                {
+                    for (int xi = 0; xi < 30; xi++)
+                    {
+                        newState[xi, 29] = PointState.YourWall;
+                    }
+                    break;
+                }
+            }
             for (int x = 0; x < 30; x++)
             {
                 for (int y = 0; y < 30; y++)
@@ -313,30 +400,49 @@ namespace TronLCSim
             int px = 0, py = 0;
             Locate(inputState, PointState.You, out px, out py);
             int newpx = px, newpy = py;
+            bool validMove = true;
             do
             {
+                validMove = true;
                 newpx = px; newpy = py;
-                int move = rng.Next(4);
-                switch (move)
+                if (py == 0)
                 {
-                    case 0:
-                        newpx++;
-                        newpx = newpx % 30;
-                        break;
-                    case 1:
-                        newpy++;
-                        newpy = newpy % 30;
-                        break;
-                    case 2:
-                        newpx--;
-                        if (newpx < 0) newpx = 29;
-                        break;
-                    case 3:
-                        newpy--;
-                        if (newpy < 0) newpy = 29;
-                        break;
+                    newpx = rng.Next(30);
+                    newpy = 1;
                 }
-            } while (inputState[newpx, newpy] != PointState.Clear);
+                else if (py == 29)
+                {
+                    newpx = rng.Next(30);
+                    newpy = 28;
+                }
+                else
+                {
+                    int move = rng.Next(4);
+                    switch (move)
+                    {
+                        case 0:
+                            newpx++;
+                            newpx = newpx % 30;
+                            break;
+                        case 1:
+                            newpy++;
+                            newpy = newpy % 30;
+                            break;
+                        case 2:
+                            newpx--;
+                            if (newpx < 0) newpx = 29;
+                            break;
+                        case 3:
+                            newpy--;
+                            if (newpy < 0) newpy = 29;
+                            break;
+                    }
+                }
+                if (inputState[newpx, newpy] != PointState.Clear)
+                {
+                    validMove = false;
+                }
+            } while (!validMove);
 
             inputState[px, py] = PointState.YourWall;
             inputState[newpx, newpy] = PointState.You;

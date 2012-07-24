@@ -3,11 +3,14 @@ tron-lc-simulator
 
 Tron Light Cycle Simulator for Entelect Challenge
 
+ChangeLog
+=========
+24/07/2012: - Added code for checking, visualizing and handling unique pole (y=0, y=29) behaviour.
+
 ToDo List
 =========
 1) Make it possible to start using external programs based on start.bat principle described in the challenge
-2) Adjust visualization and rule checks to account for pole (y=0, y=29) behaviour
-3) Lots and lots of testing
+2) Lots and lots of testing
 
 What is working
 ============
