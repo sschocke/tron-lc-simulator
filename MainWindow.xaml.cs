@@ -704,19 +704,28 @@ namespace TronLCSim
 
         private void btnPlayer1_Click(object sender, RoutedEventArgs e)
         {
-            players[0] = new Player(PlayerType.InternalRandom, "Player 1");
+            players[0] = SelectBot("Player 1");
             btnPlayer1.IsEnabled = false;
             btnPlayer2.IsEnabled = true;
             lblPlayer1Name.Content = "Player 1: " + players[0].ToString();
         }
 
+        private Player SelectBot(string player)
+        {
+            BotTypeWindow window = new BotTypeWindow();
+            window.ShowDialog();
+            window.WhichPlayer = player;
+
+            return window.Player;
+        }
+
         private void btnPlayer2_Click(object sender, RoutedEventArgs e)
         {
-            players[1] = new Player(PlayerType.InternalRandom, "Player 2");
+            players[1] = SelectBot("Player 2");
             btnPlayer2.IsEnabled = false;
             btnStart.IsEnabled = true;
             btnReset.IsEnabled = true;
-            lblPlayer2Name.Content = "Player 1: " + players[1].ToString();
+            lblPlayer2Name.Content = "Player 2: " + players[1].ToString();
         }
     }
 }

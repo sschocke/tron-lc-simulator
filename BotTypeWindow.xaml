@@ -1,0 +1,12 @@
+﻿<Window x:Class="TronLCSim.BotTypeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Select the type of bot..." Height="Auto" Width="Auto" ResizeMode="NoResize" 
+        ShowInTaskbar="False" SizeToContent="WidthAndHeight" 
+        WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow"
+        Closing="Window_Closing">
+    <StackPanel Orientation="Vertical">
+        <Button Name="btnInternalRandomBot" Content="Internal Random Move Bot" Click="btnInternalRandomBot_Click" Padding="30,20" Margin="3" />
+        <Button Name="btnStartBatBot" Content="Start.bat External Bot" Click="btnStartBatBot_Click" Padding="30,20" Margin="3" />
+    </StackPanel>
+</Window>
