@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Select the type of bot..." Height="Auto" Width="Auto" ResizeMode="NoResize" 
         ShowInTaskbar="False" SizeToContent="WidthAndHeight" 
-        WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow"
+        WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" Topmost="True"
         Closing="Window_Closing">
     <StackPanel Orientation="Vertical">
         <Button Name="btnInternalRandomBot" Content="Internal Random Move Bot" Click="btnInternalRandomBot_Click" Padding="30,20" Margin="3" />

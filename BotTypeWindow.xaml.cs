@@ -37,7 +37,18 @@ namespace TronLCSim
 
         private void btnStartBatBot_Click(object sender, RoutedEventArgs e)
         {
+            StartBatConfigWindow configWindow = new StartBatConfigWindow();
+            configWindow.txtPlayerName.Text = this.WhichPlayer;
+            bool? result = configWindow.ShowDialog();
+            if (result.HasValue && (result.Value == true))
+            {
+                MainWindow.StartBatPlayer temp = new MainWindow.StartBatPlayer(configWindow.txtPlayerName.Text, 
+                    configWindow.txtStartPath.Text, configWindow.txtWorkDir.Text);
 
+                this.Player = temp;
+                canClose = true;
+                Close();
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

@@ -60,11 +60,13 @@ namespace TronLCSim
         public class StartBatPlayer : Player
         {
             public string path;
+            public string workdir;
 
-            public StartBatPlayer(string name, string path)
+            public StartBatPlayer(string name, string path, string workdir)
                 : base(PlayerType.ExternalStartBat, name)
             {
                 this.path = path;
+                this.workdir = workdir;
             }
 
             public override string ToString()
@@ -713,8 +715,8 @@ namespace TronLCSim
         private Player SelectBot(string player)
         {
             BotTypeWindow window = new BotTypeWindow();
-            window.ShowDialog();
             window.WhichPlayer = player;
+            window.ShowDialog();
 
             return window.Player;
         }
