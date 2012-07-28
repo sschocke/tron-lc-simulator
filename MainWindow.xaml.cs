@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.ComponentModel;
 using System.Threading;
 using System.IO;
+using System.Diagnostics;
 
 namespace TronLCSim
 {
@@ -397,6 +398,37 @@ namespace TronLCSim
         }
 
         private void CallPlayerProgram()
+        {
+            switch (players[currentPlayer].type)
+            {
+                case PlayerType.InternalRandom:
+                    InternalRandomWalker();
+                    break;
+                case PlayerType.ExternalStartBat:
+                    {
+                        StartBatPlayer player = (StartBatPlayer)players[currentPlayer];
+                        File.Copy("game.state", player.workdir + "\\game.state", true);
+
+                        ProcessStartInfo botProcessInfo = new ProcessStartInfo();
+                        botProcessInfo.FileName = player.path;
+                        botProcessInfo.WorkingDirectory = player.workdir;
+                        botProcessInfo.UseShellExecute = true;
+                        botProcessInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                        botProcessInfo.Arguments = '"' + player.workdir + "\\game.state\"";
+                        Process botProcess = Process.Start(botProcessInfo);
+                        while (botProcess.HasExited == false)
+                        {
+                            Thread.Sleep(100);
+                        }
+
+                        File.Copy(player.workdir + "\\game.state", "game.state", true);
+                    }
+                    break;
+
+            }
+        }
+
+        private void InternalRandomWalker()
         {
             PointState[,] inputState = ReadGameState();
             int px = 0, py = 0;
