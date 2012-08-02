@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TronLC.Framework;
 
 namespace TronLCSim
 {
@@ -56,6 +57,21 @@ namespace TronLCSim
             if (!canClose)
             {
                 e.Cancel = true;
+            }
+        }
+
+        private void btnAIBot_Click(object sender, RoutedEventArgs e)
+        {
+            AIBotSelectionWindow selectWindow = new AIBotSelectionWindow(MainWindow.bots);
+            bool? result = selectWindow.ShowDialog();
+            if (result.HasValue && (result.Value == true))
+            {
+                MainWindow.AIBotPlayer temp = new MainWindow.AIBotPlayer(selectWindow.cmbInstances.SelectedItem as IAIBot);
+                MainWindow.bots.Remove(temp.instance);
+
+                this.Player = temp;
+                canClose = true;
+                Close();
             }
         }
     }

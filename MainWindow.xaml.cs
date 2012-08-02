@@ -15,6 +15,8 @@ using System.ComponentModel;
 using System.Threading;
 using System.IO;
 using System.Diagnostics;
+using TronLC.Framework;
+using System.Reflection;
 
 namespace TronLCSim
 {
@@ -39,7 +41,8 @@ namespace TronLCSim
         public enum PlayerType
         {
             InternalRandom,
-            ExternalStartBat
+            ExternalStartBat,
+            AIBotInterface
         }
 
         public class Player
@@ -75,6 +78,23 @@ namespace TronLCSim
                 return name;
             }
         }
+        public class AIBotPlayer : Player
+        {
+            public IAIBot instance;
+
+            public AIBotPlayer(IAIBot bot)
+                : base(PlayerType.AIBotInterface, bot.ToString())
+            {
+                this.instance = bot;
+            }
+
+            public override string ToString()
+            {
+                return name;
+            }
+        }
+
+        public static List<IAIBot> bots = new List<IAIBot>();
 
         public Ellipse[,] points = new Ellipse[30, 30];
         public Line[,] Hlines = new Line[30, 30];
@@ -93,6 +113,7 @@ namespace TronLCSim
             createHLines();
             createVLines();
             createVectorDots();
+            findAIBots();
 
             resetMap();
             repaintMap();
@@ -105,6 +126,29 @@ namespace TronLCSim
             worker.DoWork += new DoWorkEventHandler(worker_DoWork);
             worker.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
             worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+        }
+
+        private void findAIBots()
+        {
+            Type typeInterface = typeof(IAIBot);
+
+            string[] exeFiles = Directory.GetFiles(Environment.CurrentDirectory, "*.exe", SearchOption.TopDirectoryOnly);
+            foreach (string file in exeFiles)
+            {
+                Assembly pluginAssembly = Assembly.LoadFrom(file);
+
+                foreach (Type pluginType in pluginAssembly.GetTypes())
+                {
+                    Type testType = pluginType.GetInterface(typeInterface.FullName);
+
+                    if ((pluginType.IsSubclassOf(typeInterface) == true) || (testType != null))
+                    {
+                        IAIBot instance = (IAIBot)Activator.CreateInstance(pluginType);
+
+                        bots.Add(instance);
+                    }
+                }
+            }
         }
 
         void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -422,6 +466,13 @@ namespace TronLCSim
                         }
 
                         File.Copy(player.workdir + "\\game.state", "game.state", true);
+                    }
+                    break;
+                case PlayerType.AIBotInterface:
+                    {
+                        AIBotPlayer player = (AIBotPlayer)players[currentPlayer];
+
+                        player.instance.ExecuteMove("game.state");
                     }
                     break;
 

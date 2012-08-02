@@ -55,9 +55,16 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AIBotSelectionWindow.xaml.cs">
+      <DependentUpon>AIBotSelectionWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="StartBatConfigWindow.xaml.cs">
       <DependentUpon>StartBatConfigWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="AIBotSelectionWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="BotTypeWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -100,11 +107,35 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="..\HunterBot\bin\Debug\start.bat">
+      <Link>HunterBot\start.bat</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\HunterBot\bin\Debug\HunterBot.exe">
+      <Link>HunterBot\HunterBot.exe</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\HunterBot\bin\Debug\TronLC.Framework.dll">
+      <Link>HunterBot\TronLC.Framework.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HunterBot\HunterBot.csproj">
+      <Project>{4A8A7C7F-A636-4018-96EA-23F906FA46E2}</Project>
+      <Name>HunterBot</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TronLC.Framework\TronLC.Framework.csproj">
+      <Project>{A56D86B7-CCDC-4CA3-9556-A5C108EC7C5F}</Project>
+      <Name>TronLC.Framework</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

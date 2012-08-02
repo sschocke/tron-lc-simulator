@@ -8,5 +8,6 @@
     <StackPanel Orientation="Vertical">
         <Button Name="btnInternalRandomBot" Content="Internal Random Move Bot" Click="btnInternalRandomBot_Click" Padding="30,20" Margin="3" />
         <Button Name="btnStartBatBot" Content="Start.bat External Bot" Click="btnStartBatBot_Click" Padding="30,20" Margin="3" />
+        <Button Name="btnAIBot" Content="AIBot Interface DLL Bot" Click="btnAIBot_Click" Padding="30,20" Margin="3" />
     </StackPanel>
 </Window>

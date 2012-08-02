@@ -1,0 +1,28 @@
+﻿<Window x:Class="TronLCSim.AIBotSelectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="AIBot Selection..." Height="Auto" Width="600" ResizeMode="NoResize" 
+        ShowInTaskbar="False" SizeToContent="Height" Topmost="True"
+        WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow"
+        Closing="Window_Closing" Loaded="Window_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Label Content="AIBot Instance" Grid.Row="0" Grid.Column="0" HorizontalContentAlignment="Right" />
+        <ComboBox Name="cmbInstances" Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Path=Instances}" />
+        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" HorizontalAlignment="Center" Margin="0,8">
+            <Button Name="btnOK" Content="OK" Width="100" Padding="0,10" Margin="0,0,10,0" IsDefault="True"
+                    Click="btnOK_Click" />
+            <Button Name="btnCancel" Content="Cancel" Width="100" Margin="10,0,0,0" IsCancel="True"
+                    Click="btnCancel_Click" />
+        </StackPanel>
+    </Grid>
+</Window>
