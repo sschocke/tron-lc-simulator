@@ -1,7 +1,7 @@
 ﻿<Window x:Class="TronLCSim.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Tron Light Cycle Simulation Server" Width="900" Height="700">
+        Title="Tron Light Cycle Simulation Server" Width="Auto" Height="Auto" SizeToContent="WidthAndHeight">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -10,18 +10,30 @@
         </Grid.ColumnDefinitions>
         <StackPanel Orientation="Vertical" Grid.Column="0">
             <Label Name="lblCurrentPlayer" Content="Current Player: 1" />
-            <StackPanel Orientation="Horizontal">
-                <Ellipse Width="16" Height="16" Stroke="DarkRed" Fill="Red" />
-                <Label Name="lblPlayer1Name" Content="Player 1: (NONE)" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <Ellipse Width="16" Height="16" Stroke="DarkBlue" Fill="Blue" />
-                <Label Name="lblPlayer2Name" Content="Player 2: (NONE)" />
-            </StackPanel>
+            <Border BorderThickness="1" BorderBrush="Black" CornerRadius="5" Padding="5,3" Margin="5,2,5,10">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="16" Height="16" Stroke="DarkRed" Fill="Red" />
+                        <Label Name="lblPlayer1Name" Content="Player 1: (NONE)" />
+                    </StackPanel>
+                    <Label Name="lblPlayer1WinsLosses" Content="Wins: 0 / Losses: 0" />
+                    <Label Name="lblPlayer1Totals" Content="Games Played: 0 / Winning: 0%" />
+                </StackPanel>
+            </Border>
+            <Border BorderThickness="1" BorderBrush="Black" CornerRadius="5" Padding="5,3" Margin="5,2,5,10">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="16" Height="16" Stroke="DarkBlue" Fill="Blue" />
+                        <Label Name="lblPlayer2Name" Content="Player 2: (NONE)" />
+                    </StackPanel>
+                    <Label Name="lblPlayer2WinsLosses" Content="Wins: 0 / Losses: 0" />
+                    <Label Name="lblPlayer2Totals" Content="Games Played: 0 / Winning: 0%" />
+                </StackPanel>
+            </Border>
         </StackPanel>
-        <Canvas Height="606" Width="606" Grid.Column="1" Name="gridSpace">
+        <Canvas Height="616" Width="616" Grid.Column="1" Name="gridSpace">
         </Canvas>
-        <StackPanel Orientation="Vertical" Grid.Column="2">
+        <StackPanel Orientation="Vertical" Grid.Column="2" Margin="5,10">
             <Button Content="Start Game" Name="btnStart" Padding="30, 10" IsEnabled="False" 
                     Click="btnStart_Click"/>
             <Button Content="Stop Game" Name="btnStop" Padding="30, 10" IsEnabled="False" 

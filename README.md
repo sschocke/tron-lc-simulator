@@ -8,6 +8,7 @@ ChangeLog
 - 24/07/2012: - Added code for checking, visualizing and handling unique pole (y=0, y=29) behaviour.
 - 28/07/2012: - Added code for executing external start.bat type bots.
 - 02/08/2012: - Added integration with my TronLC.Framework project to provide debugging via Visual Studio by dynamically loading bot assemblies during startup.
+- 03/08/2012: - Display games won/lost/played per player
 
 ToDo List
 =========

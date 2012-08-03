@@ -1,22 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.ComponentModel;
-using System.Threading;
-using System.IO;
-using System.Diagnostics;
 using TronLC.Framework;
-using System.Reflection;
 
 namespace TronLCSim
 {
@@ -49,6 +43,21 @@ namespace TronLCSim
         {
             public PlayerType type;
             public string name;
+            public int Wins;
+            public int TotalGames;
+
+            public int Loses { get { return TotalGames - Wins; } }
+            public double WinRatio
+            {
+                get
+                {
+                    if (TotalGames < 1)
+                    {
+                        return 0;
+                    }
+                    return (double)Wins / (double)TotalGames * 100.0;
+                }
+            }
 
             public Player(PlayerType type, string name)
             {
@@ -110,6 +119,8 @@ namespace TronLCSim
         {
             InitializeComponent();
 
+            players = new Player[2];
+
             createHLines();
             createVLines();
             createVectorDots();
@@ -118,7 +129,6 @@ namespace TronLCSim
             resetMap();
             repaintMap();
 
-            players = new Player[2];
             worker = new BackgroundWorker();
             worker.WorkerSupportsCancellation = true;
             worker.WorkerReportsProgress = true;
@@ -166,6 +176,10 @@ namespace TronLCSim
             }
             else if (e.ProgressPercentage == 99)
             {
+                players[0].TotalGames++;
+                players[1].TotalGames++;
+                players[1].Wins++;
+                repaintMap();
                 Ellipse targetEllipse = (Ellipse)e.UserState;
                 RecolorLines(Brushes.Red, Brushes.Black);
                 targetEllipse.Stroke = Brushes.DarkGray;
@@ -174,6 +188,10 @@ namespace TronLCSim
             }
             else if (e.ProgressPercentage == 100)
             {
+                players[0].TotalGames++;
+                players[0].Wins++;
+                players[1].TotalGames++;
+                repaintMap();
                 Ellipse targetEllipse = (Ellipse)e.UserState;
                 RecolorLines(Brushes.Blue, Brushes.Black);
                 targetEllipse.Stroke = Brushes.DarkGray;
@@ -216,7 +234,7 @@ namespace TronLCSim
         {
             while (true)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(50);
                 if (worker.CancellationPending == true)
                 {
                     break;
@@ -636,46 +654,20 @@ namespace TronLCSim
                             break;
                     }
 
-                    //switch (map[x, y])
-                    //{
-                    //    case PointState.Player1:
-                    //    case PointState.Player1Wall:
-                    //        if ((map[x, (y + 1) % 30] == PointState.Player1) || (map[x, (y + 1) % 30] == PointState.Player1Wall))
-                    //        {
-                    //            Vlines[x, y].Stroke = Brushes.Red;
-                    //            Vlines[x, y].StrokeThickness = 3;
-                    //        }
-                    //        if ((map[(x + 1) % 30, y] == PointState.Player1) || (map[(x + 1) % 30, y] == PointState.Player1Wall))
-                    //        {
-                    //            Hlines[x, y].Stroke = Brushes.Red;
-                    //            Hlines[x, y].StrokeThickness = 3;
-                    //        }
-                    //        break;
-                    //    case PointState.Player2:
-                    //    case PointState.Player2Wall:
-                    //        if ((map[x, (y + 1) % 30] == PointState.Player2) || (map[x, (y + 1) % 30] == PointState.Player2Wall))
-                    //        {
-                    //            Vlines[x, y].Stroke = Brushes.Aqua;
-                    //            Vlines[x, y].StrokeThickness = 3;
-                    //        }
-                    //        if ((map[(x + 1) % 30, y] == PointState.Player2) || (map[(x + 1) % 30, y] == PointState.Player2Wall))
-                    //        {
-                    //            Hlines[x, y].Stroke = Brushes.Aqua;
-                    //            Hlines[x, y].StrokeThickness = 3;
-                    //        }
-                    //        break;
-                    //    default:
-                    //        Vlines[x, y].Stroke = Brushes.Black;
-                    //        Vlines[x, y].StrokeThickness = 1;
-                    //        Hlines[x, y].Stroke = Brushes.Black;
-                    //        Hlines[x, y].StrokeThickness = 1;
-                    //        break;
-
-                    //}
                 }
             }
 
             lblCurrentPlayer.Content = "Current Player: " + (currentPlayer + 1).ToString();
+            if (players[0] != null)
+            {
+                lblPlayer1WinsLosses.Content = "Wins: " + players[0].Wins + " / Losses: " + players[0].Loses;
+                lblPlayer1Totals.Content = "Games Played: " + players[0].TotalGames + " / Winning: " + players[0].WinRatio.ToString("0.00") + "%";
+            }
+            if (players[1] != null)
+            {
+                lblPlayer2WinsLosses.Content = "Wins: " + players[1].Wins + " / Losses: " + players[1].Loses;
+                lblPlayer2Totals.Content = "Games Played: " + players[1].TotalGames + " / Winning: " + players[1].WinRatio.ToString("0.00") + "%";
+            }
         }
 
         private void resetMap()
@@ -695,11 +687,10 @@ namespace TronLCSim
             }
 
             int startX = rng.Next(30);
-            int startY = rng.Next(30);
+            int startY = rng.Next(28) + 1;
             map[startX, startY] = PointState.Player1;
 
-            startX = rng.Next(30);
-            startY = rng.Next(30);
+            startX = (startX + 15) % 30;
             map[startX, startY] = PointState.Player2;
 
             currentPlayer = rng.Next(2);
@@ -795,15 +786,6 @@ namespace TronLCSim
             lblPlayer1Name.Content = "Player 1: " + players[0].ToString();
         }
 
-        private Player SelectBot(string player)
-        {
-            BotTypeWindow window = new BotTypeWindow();
-            window.WhichPlayer = player;
-            window.ShowDialog();
-
-            return window.Player;
-        }
-
         private void btnPlayer2_Click(object sender, RoutedEventArgs e)
         {
             players[1] = SelectBot("Player 2");
@@ -811,6 +793,15 @@ namespace TronLCSim
             btnStart.IsEnabled = true;
             btnReset.IsEnabled = true;
             lblPlayer2Name.Content = "Player 2: " + players[1].ToString();
+        }
+
+        private Player SelectBot(string player)
+        {
+            BotTypeWindow window = new BotTypeWindow();
+            window.WhichPlayer = player;
+            window.ShowDialog();
+
+            return window.Player;
         }
     }
 }
